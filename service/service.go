@@ -9,6 +9,10 @@ import (
 	"github.com/novychok/fondyapi/types"
 )
 
+type APIResponse struct {
+	Response types.Response `json:"response"`
+}
+
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var respose types.APIResponse
@@ -18,9 +22,9 @@ func main() {
 			return
 		}
 
-		fmt.Println(respose)
+		fmt.Printf("%+v\n", respose)
 	})
 
-	log.Println("starting server on port :8080")
+	log.Println("starting a server on port :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

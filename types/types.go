@@ -1,21 +1,17 @@
 package types
 
-type APIRequest struct {
-	Request any `json:"request"`
+type Request struct {
+	OrderID           string `json:"order_id"`
+	OrderDesc         string `json:"order_desc"`
+	Currency          string `json:"currency"`
+	Amount            string `json:"amount"`
+	Signature         string `json:"signature"`
+	MerchantID        string `json:"merchant_id"`
+	ServerCallbackURL string `json:"server_callback_url"`
 }
 
 type APIResponse struct {
-	Response any `json:"response"`
-}
-
-type Request struct {
-	OrderID     string `json:"order_id"`
-	OrderDesc   string `json:"order_desc"`
-	Currency    string `json:"currency"`
-	Amount      string `json:"amount"`
-	Signature   string `json:"signature"`
-	MerchantID  string `json:"merchant_id"`
-	CallbackURL string `json:"callback_url"`
+	Response Response `json:"response"`
 }
 
 type Response struct {
@@ -46,12 +42,6 @@ type Response struct {
 	DesignID                int    `json:"design_id"`
 	Subscription            string `json:"subscription"`
 	SubscriptionCallbackURL string `json:"subscription_callback_url"`
-}
-
-type MidResponse struct {
-	Status    string `json:"response_status"`
-	Url       string `json:"checkout_code"`
-	PaymentId int    `json:"payment_id"`
 }
 
 type ErrorResponse struct {

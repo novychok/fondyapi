@@ -35,7 +35,7 @@ func NewAPIRequest(orderId, orderDesc, currency, amount,
 			Amount:            amount,
 			Signature:         "",
 			MerchantID:        merchantId,
-			ServerCallbackURL: "https://5ca5-37-252-93-141.ngrok-free.app",
+			ServerCallbackURL: "https://11ee-37-252-93-141.ngrok-free.app",
 		},
 	}
 }
