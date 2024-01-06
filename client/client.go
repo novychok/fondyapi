@@ -10,60 +10,84 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/fatih/structs"
+	"github.com/google/uuid"
 	"github.com/novychok/fondyapi/types"
 )
 
-func createSignature(password string, credentials []string) string {
-	var builder strings.Builder
-	sort.Strings(credentials)
-	for _, v := range credentials {
-		if v == "" {
-			continue
-		}
-		builder.WriteString("|" + v)
-	}
-	result := password + builder.String()
-	hash := sha1.Sum([]byte(result))
+var password = "test"
 
+type APIRequest struct {
+	Request types.Request `json:"request"`
+}
+
+type APIResponse struct {
+	Response any `json:"response"`
+}
+
+func NewAPIRequest(orderId, orderDesc, currency, amount,
+	merchantId string) *APIRequest {
+	return &APIRequest{
+		Request: types.Request{
+			OrderID:           orderId,
+			OrderDesc:         orderDesc,
+			Currency:          currency,
+			Amount:            amount,
+			Signature:         "",
+			MerchantID:        merchantId,
+			ServerCallbackURL: "https://5ca5-37-252-93-141.ngrok-free.app",
+		},
+	}
+}
+
+func (a *APIRequest) SetSignature(password string) {
+	fieldsMap := structs.Map(&a.Request)
+	var fieldsSl []string
+	var builder strings.Builder
+
+	for val := range fieldsMap {
+		fieldsSl = append(fieldsSl, val)
+	}
+	sort.Strings(fieldsSl)
+
+	for _, val := range fieldsSl {
+		if v, ok := fieldsMap[val]; ok {
+			if v == "" {
+				continue
+			}
+			builder.WriteString("|" + v.(string))
+		}
+	}
+	formatingStr := password + builder.String()
+
+	a.Request.Signature = a.calculateSignature(formatingStr)
+}
+
+func (a APIRequest) calculateSignature(s string) string {
+	hash := sha1.Sum([]byte(s))
 	return hex.EncodeToString(hash[:])
 }
 
 func main() {
+	orderId := uuid.New().String()
+	apiRequest := NewAPIRequest(orderId, "111 order", "USD",
+		"1250", "1396424")
 
-	// password := "test"
-	sign := sha1.Sum([]byte("test|125|USD|1396424|test order|abbb"))
-	tostr := hex.EncodeToString(sign[:])
-	request := types.Request{
-		OrderID:     "abbb",
-		OrderDesc:   "test order",
-		Currency:    "USD",
-		Amount:      "125",
-		Signature:   tostr,
-		MerchantID:  "1396424",
-		CallbackURL: "https://3bc8-37-252-93-141.ngrok-free.app",
-	}
+	apiRequest.SetSignature(password)
+	// apiRequest.Request.ServerCallbackURL = "https://7143-37-252-93-141.ngrok-free.app"
 
-	sl := make([]string, 6)
-	sl[1] = request.OrderID
-	sl[2] = request.OrderDesc
-	sl[3] = request.Currency
-	sl[4] = request.Amount
-	sl[5] = request.MerchantID
-
-	// request.Signature = createSignature(password, sl)
-
-	req := types.APIRequest{Request: request}
-	requestBody, _ := json.Marshal(req)
-	res, err := http.Post("https://pay.fondy.eu/api/checkout/url/", "application/json", bytes.NewBuffer(requestBody))
+	request := APIRequest{Request: apiRequest.Request}
+	body, _ := json.Marshal(request)
+	res, err := http.Post("https://pay.fondy.eu/api/checkout/url", "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		fmt.Printf("error to make a request: %+v\n", err)
 		return
 	}
 	defer res.Body.Close()
 
-	var response types.APIResponse
+	var response APIResponse
 	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
-		fmt.Printf("error to decode the response: %+v\n", err)
+		fmt.Printf("error to decode the response 111: %+v\n", err.Error())
 		return
 	}
 	fmt.Printf("%+v\n", response)
