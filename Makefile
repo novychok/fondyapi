@@ -9,3 +9,6 @@ client: build-client
 
 service: build-service
 	@./bin/service
+
+test:
+	@go test -v ./...

@@ -55,7 +55,6 @@ func (a *RequestObj) SetSignature(password string) {
 		}
 	}
 	formatingStr := password + builder.String()
-
 	a.Request.Signature = a.calculateSignature(formatingStr)
 }
 
@@ -66,12 +65,12 @@ func (a *RequestObj) calculateSignature(s string) string {
 
 func main() {
 	orderId := uuid.New().String()
-	apiRequest := NewRequestObj(orderId, "111 order", "USD",
+	requestObj := NewRequestObj(orderId, "best order", "USD",
 		"1250", "1396424")
 
-	apiRequest.SetSignature(password)
+	requestObj.SetSignature(password)
 
-	request := RequestObj{Request: apiRequest.Request}
+	request := RequestObj{Request: requestObj.Request}
 	body, _ := json.Marshal(request)
 	res, err := http.Post("https://pay.fondy.eu/api/checkout/url", "application/json", bytes.NewBuffer(body))
 	if err != nil {

@@ -1,5 +1,7 @@
 package types
 
+import "fmt"
+
 type ResponseObj struct {
 	Response any `json:"response"`
 }
@@ -48,4 +50,8 @@ type ErrorResponse struct {
 	Status  string `json:"response_status"`
 	Code    int    `json:"error_code"`
 	Message string `json:"error_message"`
+}
+
+func (e *ErrorResponse) Error() string {
+	return fmt.Sprintf("ErrorResponse: Status: %s, Code: %d, Message: %s)", e.Status, e.Code, e.Message)
 }
