@@ -9,13 +9,9 @@ import (
 	"github.com/novychok/fondyapi/types"
 )
 
-type APIResponse struct {
-	Response types.Response `json:"response"`
-}
-
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		var respose types.APIResponse
+		var respose types.ResponseObj
 		if err := json.NewDecoder(r.Body).Decode(&respose); err != nil {
 			http.Error(w, "error to encode the r.Body", http.StatusBadRequest)
 			fmt.Printf("error to encode the r.Body: %+v\n", err)

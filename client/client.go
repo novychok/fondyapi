@@ -17,17 +17,13 @@ import (
 
 var password = "test"
 
-type APIRequest struct {
+type RequestObj struct {
 	Request types.Request `json:"request"`
 }
 
-type APIResponse struct {
-	Response any `json:"response"`
-}
-
-func NewAPIRequest(orderId, orderDesc, currency, amount,
-	merchantId string) *APIRequest {
-	return &APIRequest{
+func NewRequestObj(orderId, orderDesc, currency, amount,
+	merchantId string) *RequestObj {
+	return &RequestObj{
 		Request: types.Request{
 			OrderID:           orderId,
 			OrderDesc:         orderDesc,
@@ -35,12 +31,12 @@ func NewAPIRequest(orderId, orderDesc, currency, amount,
 			Amount:            amount,
 			Signature:         "",
 			MerchantID:        merchantId,
-			ServerCallbackURL: "https://11ee-37-252-93-141.ngrok-free.app",
+			ServerCallbackURL: "https://cf66-37-252-93-141.ngrok-free.app",
 		},
 	}
 }
 
-func (a *APIRequest) SetSignature(password string) {
+func (a *RequestObj) SetSignature(password string) {
 	fieldsMap := structs.Map(&a.Request)
 	var fieldsSl []string
 	var builder strings.Builder
@@ -63,20 +59,19 @@ func (a *APIRequest) SetSignature(password string) {
 	a.Request.Signature = a.calculateSignature(formatingStr)
 }
 
-func (a APIRequest) calculateSignature(s string) string {
+func (a *RequestObj) calculateSignature(s string) string {
 	hash := sha1.Sum([]byte(s))
 	return hex.EncodeToString(hash[:])
 }
 
 func main() {
 	orderId := uuid.New().String()
-	apiRequest := NewAPIRequest(orderId, "111 order", "USD",
+	apiRequest := NewRequestObj(orderId, "111 order", "USD",
 		"1250", "1396424")
 
 	apiRequest.SetSignature(password)
-	// apiRequest.Request.ServerCallbackURL = "https://7143-37-252-93-141.ngrok-free.app"
 
-	request := APIRequest{Request: apiRequest.Request}
+	request := RequestObj{Request: apiRequest.Request}
 	body, _ := json.Marshal(request)
 	res, err := http.Post("https://pay.fondy.eu/api/checkout/url", "application/json", bytes.NewBuffer(body))
 	if err != nil {
@@ -85,10 +80,11 @@ func main() {
 	}
 	defer res.Body.Close()
 
-	var response APIResponse
+	var response types.ResponseObj
 	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
-		fmt.Printf("error to decode the response 111: %+v\n", err.Error())
+		fmt.Printf("error to decode the response: %+v\n", err.Error())
 		return
 	}
+
 	fmt.Printf("%+v\n", response)
 }

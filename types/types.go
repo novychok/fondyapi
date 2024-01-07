@@ -1,5 +1,9 @@
 package types
 
+type ResponseObj struct {
+	Response any `json:"response"`
+}
+
 type Request struct {
 	OrderID           string `json:"order_id"`
 	OrderDesc         string `json:"order_desc"`
@@ -8,10 +12,6 @@ type Request struct {
 	Signature         string `json:"signature"`
 	MerchantID        string `json:"merchant_id"`
 	ServerCallbackURL string `json:"server_callback_url"`
-}
-
-type APIResponse struct {
-	Response Response `json:"response"`
 }
 
 type Response struct {

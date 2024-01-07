@@ -1,5 +1,5 @@
 # Fondy payment system integration example on Go language
-1) Accept a Payment documentation (https://docs.fondy.eu/ru/docs/page/3/#chapter-3-1)
+1) Payment Accept documentation (https://docs.fondy.eu/ru/docs/page/3/#chapter-3-1)
 
 # How to use
 1) Run service/service.go
