@@ -1,11 +1,8 @@
 package main
 
 import (
-	"errors"
 	"testing"
 )
-
-var signatureErr = errors.New("incorrect signature")
 
 func TestSetSignature(t *testing.T) {
 	var testCase = struct {

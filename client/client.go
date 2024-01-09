@@ -31,7 +31,8 @@ func NewRequestObj(orderId, orderDesc, currency, amount,
 			Amount:            amount,
 			Signature:         "",
 			MerchantID:        merchantId,
-			ServerCallbackURL: "https://cf66-37-252-93-141.ngrok-free.app",
+			ServerCallbackURL: "https://4bfe-37-252-93-141.ngrok-free.app/callback",
+			ResponseURL:       "https://4bfe-37-252-93-141.ngrok-free.app/response",
 		},
 	}
 }
@@ -85,5 +86,5 @@ func main() {
 		return
 	}
 
-	fmt.Printf("%+v\n", response)
+	fmt.Printf("%v\n", response)
 }
